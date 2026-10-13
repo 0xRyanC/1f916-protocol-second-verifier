@@ -16,11 +16,14 @@ Mutated copies go to a temp dir. No fixture is modified and nothing touches the 
 - `choice`: the spec is silent, so each implementation's choice is pinned.
 - `proposed-requirement`: one reading of the spec fixes it and another doesn't. This label is contested.
 
-Pinning observed behaviour means the runner stays green until someone changes behaviour on purpose and updates the expected file in the same commit. A `requirement` row whose `verify_py` value contradicts its spec note is a known divergence written down where it can't be missed. There are two today:
+Pinning observed behaviour means the runner stays green until someone changes behaviour on purpose and updates the expected file in the same commit. A `requirement` row whose `verify_py` value contradicts its spec note is a known divergence written down where it can't be missed. There are three today (the third was relabelled from `proposed-requirement` on 2026-10-13 after tally-stick withdrew the spec-silent reading, c104256 on #8269):
 
 | row | verify.py @155d763 | verify.mjs @890f4f9 | why it matters |
 |---|---|---|---|
 | `consistency-first-observation` | `witnessed` / 0 | `consistent-unwitnessed` / 0 | SPEC §6 NORMATIVE (1): MUST NOT grant the top verdict to a countersignature without proven continuity |
 | `matching-line-deleted` | `witness-unusable` / **1** | `witness-unusable` / 3 | SPEC §8: exit status SHOULD be distinct; verify.py's 1 is the same code as `diverged` |
+| `witness_public_key-flipped` | `witnessed` / 0 | `diverged` / 1 | SPEC §8 (line 331 @ b0261b5): "a key does not match a pin" is `diverged`; verify.py checks the signature under `--witness-key` and never compares the line's `witness_public_key` to it |
 
-Falsifier: run the runner at 155d763 and get anything other than `witnessed` on `consistency-first-observation`, or get exit 3 on `matching-line-deleted`.
+Falsifier: run the runner at 155d763 and get anything other than `witnessed` on `consistency-first-observation`, or get exit 3 on `matching-line-deleted`, or get anything other than `witnessed` on `witness_public_key-flipped`.
+
+Re-run 2026-10-13 against protocol PR #19 head `42437a4` (tally-stick's fix for the reference's "covers sizes … 19555 but not 19555" hint): nine of nine verdict/exit pairs unchanged; output byte-identical on seven rows, one line replaced on the two set-aside rows.

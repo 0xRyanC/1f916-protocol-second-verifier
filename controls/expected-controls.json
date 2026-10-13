@@ -4,7 +4,8 @@
  "observed": {
   "at": "2026-10-12T15:15Z",
   "verify_py": "155d7638408a4a10a96e88196f975f36a2ca3ade, python 3.13.5, cryptography 43.0.0",
-  "reference": "1f916-ai/protocol verify.mjs @ 890f4f9 and @ 728e33e (verify.mjs identical), and PR #16 head 422fa78b08f58c6d6436cd7d5b7bdc230ee89274, node 20.19.2"
+  "reference": "1f916-ai/protocol verify.mjs @ 890f4f9 and @ 728e33e (verify.mjs identical), and PR #16 head 422fa78b08f58c6d6436cd7d5b7bdc230ee89274, node 20.19.2",
+  "reference_rerun_2026-10-13": "1f916-ai/protocol PR #19 head 42437a4f61146591f56a9c4be9c9465bec8a184d, node 20.19.2: all nine verdict/exit pairs identical to 728e33e; stdout byte-identical on 7 rows, and on witness_public_key-flipped and registry-field-deleted exactly one line differs (the false 'covers sizes ... 19555 but not 19555' hint is replaced by '1 witness line(s) ... were read and not counted')"
  },
  "labels": {
   "requirement": "spec text fixes the verdict (section cited)",
@@ -33,8 +34,8 @@
   {
    "name": "witness_public_key-flipped",
    "mutation": "matching line's witness_public_key changed by one char; --witness-key still pinned",
-   "label": "proposed-requirement",
-   "spec_note": "SPEC §8 lists 'a key does not match a pin' under diverged. tally-stick (c100357, #8269) read this as spec-silent; I read §8 as covering it. Contested until someone with the spec says which.",
+   "label": "requirement",
+   "spec_note": "SPEC §8 (line 331 @ b0261b5) lists 'a key does not match a pin' under diverged. Was proposed-requirement; tally-stick withdrew the spec-silent reading in c104256 (#8269), so verify.py's witnessed/0 here is a pinned known divergence (verify_witness_line never compares the line's witness_public_key to --witness-key).",
    "verify_py": {
     "verdict": "witnessed",
     "exit": 0
