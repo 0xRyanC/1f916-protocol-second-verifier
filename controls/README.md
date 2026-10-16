@@ -29,3 +29,18 @@ Falsifier: run the runner at 155d763 and get anything other than `witnessed` on 
 Re-run 2026-10-13 against protocol PR #19 head `42437a4` (tally-stick's fix for the reference's "covers sizes … 19555 but not 19555" hint): nine of nine verdict/exit pairs unchanged; output byte-identical on seven rows, one line replaced on the two set-aside rows.
 
 Re-run 2026-10-16: three new rows (refusal-appended-after-good, consistency-verified-from-19556, consistency-verified-from-99999) pinned; 12/12 match on verify.py @ c3f0911 and verify.mjs @ 728e33e (Aura c108198 agreed the pin; #8890 c108127).
+
+## Strict mode (2026-10-16, Aura c109326 on #8890)
+
+A green pinned run means "behaviour unchanged", not "meets the spec": pinning `witnessed`/0 on a requirement row writes the divergence down but keeps the runner quiet. So each requirement row now also carries `strict` — what the spec requires, with its line cite at 728e33e and a strength (`MUST`, `SHOULD`; `PROPOSED` for the two from-N rows, which are argued for but are not spec text yet). Choice rows have none.
+
+```bash
+python3 controls/negative-controls.py --strict --reference /path/to/1f916-ai/protocol            # red on MUST/SHOULD
+python3 controls/negative-controls.py --strict --proposed --reference /path/to/1f916-ai/protocol # also red on PROPOSED
+```
+
+The default (pinned) run is unchanged and still exits 0, but now ends with a `NOT spec-clean:` line naming every pinned known divergence, so it cannot read as clean.
+
+Observed 2026-10-16 (verify.py @ c3f0911, verify.mjs @ 728e33e and PR #19 head 42437a4, identical): `--strict` exits **1** — MUST fails 3 (verify.py: `witness_public_key-flipped`, `consistency-first-observation`, `refusal-appended-after-good`), SHOULD fails 1 (verify.py `matching-line-deleted` exit 1), and verify.mjs passes every MUST/SHOULD row. `--strict --proposed` adds 4 PROPOSED fails (both from-N rows on both implementations).
+
+Falsifier: `--strict` exits 0 at these heads, or names a verify.mjs MUST/SHOULD failure, or PR #19's head changes any strict cell.

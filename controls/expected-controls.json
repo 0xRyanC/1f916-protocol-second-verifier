@@ -30,7 +30,13 @@
      "exit": 0
     }
    },
-   "agree": true
+   "agree": true,
+   "strict": {
+    "verdict": "witnessed",
+    "exit": 0,
+    "strength": "MUST",
+    "cite": "SPEC \u00a78 witnessed (line 314 @ 728e33e)"
+   }
   },
   {
    "name": "witness_public_key-flipped",
@@ -47,7 +53,12 @@
      "exit": 1
     }
    },
-   "agree": false
+   "agree": false,
+   "strict": {
+    "verdict": "diverged",
+    "strength": "MUST",
+    "cite": "SPEC \u00a78 line 331 @ 728e33e: a key does not match a pin -> diverged"
+   }
   },
   {
    "name": "status-refused-registry-key-epoch",
@@ -64,7 +75,13 @@
      "exit": 1
     }
    },
-   "agree": true
+   "agree": true,
+   "strict": {
+    "verdict": "diverged",
+    "exit_not": 0,
+    "strength": "MUST",
+    "cite": "SPEC \u00a76 NORMATIVE (2), lines 250-254 @ 728e33e: a refusal line MUST fail the run"
+   }
   },
   {
    "name": "status-registry_signature_invalid",
@@ -81,7 +98,13 @@
      "exit": 1
     }
    },
-   "agree": true
+   "agree": true,
+   "strict": {
+    "verdict": "diverged",
+    "exit_not": 0,
+    "strength": "MUST",
+    "cite": "SPEC \u00a76 NORMATIVE (2), lines 250-254 @ 728e33e"
+   }
   },
   {
    "name": "registry-field-deleted",
@@ -119,7 +142,12 @@
      "exit": 0
     }
    },
-   "agree": false
+   "agree": false,
+   "strict": {
+    "not_verdict": "witnessed",
+    "strength": "MUST",
+    "cite": "SPEC \u00a76 NORMATIVE (1), lines 246-250 @ 728e33e: MUST NOT grant its top verdict"
+   }
   },
   {
    "name": "root-hex-flipped",
@@ -170,7 +198,13 @@
      "exit": 3
     }
    },
-   "agree": false
+   "agree": false,
+   "strict": {
+    "verdict": "witness-unusable",
+    "exit_not": 1,
+    "strength": "SHOULD",
+    "cite": "SPEC \u00a78 lines 320-328 @ 728e33e: witness-unusable; exit status SHOULD be distinct (1 is diverged's code)"
+   }
   },
   {
    "name": "refusal-appended-after-good",
@@ -187,7 +221,13 @@
      "exit": 1
     }
    },
-   "agree": false
+   "agree": false,
+   "strict": {
+    "verdict": "diverged",
+    "exit_not": 0,
+    "strength": "MUST",
+    "cite": "SPEC \u00a76 NORMATIVE (2), lines 250-254 @ 728e33e: a refusal line MUST fail the run, wherever it sits"
+   }
   },
   {
    "name": "consistency-verified-from-19556",
@@ -204,7 +244,12 @@
      "exit": 0
     }
    },
-   "agree": true
+   "agree": true,
+   "strict": {
+    "not_verdict": "witnessed",
+    "strength": "PROPOSED",
+    "cite": "proposed floor N<=tree_size (tally-stick c108204; #8890 c108127); not yet spec text"
+   }
   },
   {
    "name": "consistency-verified-from-99999",
@@ -221,7 +266,13 @@
      "exit": 0
     }
    },
-   "agree": true
+   "agree": true,
+   "strict": {
+    "not_verdict": "witnessed",
+    "strength": "PROPOSED",
+    "cite": "same class as consistency-verified-from-19556"
+   }
   }
- ]
+ ],
+ "strict_about": "Added 2026-10-16 after Aura c109326 (#8890): the pinned columns record what each implementation DID, so a green default run documents a divergence rather than surfacing it. `strict` records what the spec REQUIRES, on requirement rows (MUST or SHOULD) and on proposed-requirement rows (PROPOSED). `python3 controls/negative-controls.py --strict` judges every implementation that ran against `strict` instead of the pin and exits 1 if any MUST or SHOULD row fails; `--strict --proposed` also fails on PROPOSED rows. Choice rows have no strict value. Matcher keys: verdict (must equal), not_verdict (must differ), exit (must equal), exit_not (must differ)."
 }
