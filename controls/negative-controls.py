@@ -2,7 +2,7 @@
 """Negative controls for the witness branch: one-field mutations of the head-matching
 countersignature line, run through verify.py and (optionally) the reference verify.mjs.
 
-The six manifest cases are all positive, so a verifier that always printed "witnessed"
+The manifest cases are all positive, so a verifier that always printed "witnessed"
 would pass them. These rows check that the verifier can say no, and pin where the two
 implementations disagree.
 
@@ -37,6 +37,11 @@ def mutations(lines, i):
         L[i] = json.dumps(o, separators=(",", ":")); return "\n".join(L)
     def flip_b64(s): return s[:-2] + ("A" if s[-2] != "A" else "B") + s[-1]
     def flip_hex(s): return s[:-1] + ("0" if s[-1] != "0" else "1")
+    def refusal_after_good():
+        refused = json.loads(lines[i])
+        refused["status"] = "refused-regression"
+        refused.pop("witness_sig", None)
+        return "\n".join(lines[:i + 1] + [json.dumps(refused, separators=(",", ":"))] + lines[i + 1:])
     return {
         "baseline": "\n".join(lines),
         "witness_public_key-flipped": mut(lambda o: o.__setitem__("witness_public_key", flip_b64(o["witness_public_key"]))),
@@ -47,6 +52,9 @@ def mutations(lines, i):
         "root-hex-flipped": mut(lambda o: o.__setitem__("root", flip_hex(o["root"]))),
         "status-pending": mut(lambda o: o.__setitem__("status", "pending")),
         "matching-line-deleted": "\n".join(lines[:i] + lines[i + 1:]),
+        "refusal-appended-after-good": refusal_after_good(),
+        "consistency-verified-from-19556": mut(lambda o: o.__setitem__("consistency", "verified from 19556")),
+        "consistency-verified-from-99999": mut(lambda o: o.__setitem__("consistency", "verified from 99999")),
     }
 
 def verdict_of(out):

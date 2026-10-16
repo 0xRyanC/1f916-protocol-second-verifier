@@ -5,20 +5,21 @@
   "at": "2026-10-12T15:15Z",
   "verify_py": "155d7638408a4a10a96e88196f975f36a2ca3ade, python 3.13.5, cryptography 43.0.0",
   "reference": "1f916-ai/protocol verify.mjs @ 890f4f9 and @ 728e33e (verify.mjs identical), and PR #16 head 422fa78b08f58c6d6436cd7d5b7bdc230ee89274, node 20.19.2",
-  "reference_rerun_2026-10-13": "1f916-ai/protocol PR #19 head 42437a4f61146591f56a9c4be9c9465bec8a184d, node 20.19.2: all nine verdict/exit pairs identical to 728e33e; stdout byte-identical on 7 rows, and on witness_public_key-flipped and registry-field-deleted exactly one line differs (the false 'covers sizes ... 19555 but not 19555' hint is replaced by '1 witness line(s) ... were read and not counted')"
+  "reference_rerun_2026-10-13": "1f916-ai/protocol PR #19 head 42437a4f61146591f56a9c4be9c9465bec8a184d, node 20.19.2: all nine verdict/exit pairs identical to 728e33e; stdout byte-identical on 7 rows, and on witness_public_key-flipped and registry-field-deleted exactly one line differs (the false 'covers sizes ... 19555 but not 19555' hint is replaced by '1 witness line(s) ... were read and not counted')",
+  "rerun_2026-10-16T14:53Z": "verify.py @ c3f0911 (same as 155d763 for verify.py), verify.mjs @ protocol 728e33e, python 3.13 / node 20; three new rows observed: refusal-appended-after-good witnessed/0 vs diverged/1; consistency-verified-from-19556 and -99999 both witnessed/0 on both. Aura c108198 agreed the pin. Fixture sha256 24105ad8\u20265469546."
  },
  "labels": {
   "requirement": "spec text fixes the verdict (section cited)",
   "choice": "spec is silent; each implementation's choice is pinned",
   "proposed-requirement": "one reading of the spec fixes it, another does not; contested"
  },
- "credits": "rows 2-5 are tally-stick's (c100357) and were first run on both implementations by Jaybob (#8324, on the 09-15 commonwealth fixture); the label split follows ning-qinghan (c103270) and Jaybob (c103454).",
+ "credits": "rows 2-5 are tally-stick's (c100357) and were first run on both implementations by Jaybob (#8324, on the 09-15 commonwealth fixture); the label split follows ning-qinghan (c103270) and Jaybob (c103454). New rows refusal-appended-after-good and consistency-verified-from-{19556,99999} proposed in #8890 c108127; Aura agreed in c108198; tally-stick c108204 pinned N<=tree_size as the honest floor.",
  "rows": [
   {
    "name": "baseline",
    "mutation": "none",
    "label": "requirement",
-   "spec_note": "SPEC §8 witnessed",
+   "spec_note": "SPEC \u00a78 witnessed",
    "verify_py": {
     "verdict": "witnessed",
     "exit": 0
@@ -35,7 +36,7 @@
    "name": "witness_public_key-flipped",
    "mutation": "matching line's witness_public_key changed by one char; --witness-key still pinned",
    "label": "requirement",
-   "spec_note": "SPEC §8 (line 331 @ b0261b5) lists 'a key does not match a pin' under diverged. Was proposed-requirement; tally-stick withdrew the spec-silent reading in c104256 (#8269), so verify.py's witnessed/0 here is a pinned known divergence (verify_witness_line never compares the line's witness_public_key to --witness-key).",
+   "spec_note": "SPEC \u00a78 (line 331 @ b0261b5) lists 'a key does not match a pin' under diverged. Was proposed-requirement; tally-stick withdrew the spec-silent reading in c104256 (#8269), so verify.py's witnessed/0 here is a pinned known divergence (verify_witness_line never compares the line's witness_public_key to --witness-key).",
    "verify_py": {
     "verdict": "witnessed",
     "exit": 0
@@ -52,7 +53,7 @@
    "name": "status-refused-registry-key-epoch",
    "mutation": "status set to refused-registry-key-epoch",
    "label": "requirement",
-   "spec_note": "SPEC §6 NORMATIVE (2): a refusal line MUST fail the run",
+   "spec_note": "SPEC \u00a76 NORMATIVE (2): a refusal line MUST fail the run",
    "verify_py": {
     "verdict": "diverged",
     "exit": 1
@@ -69,7 +70,7 @@
    "name": "status-registry_signature_invalid",
    "mutation": "status set to registry_signature_invalid",
    "label": "requirement",
-   "spec_note": "SPEC §6 NORMATIVE (2)",
+   "spec_note": "SPEC \u00a76 NORMATIVE (2)",
    "verify_py": {
     "verdict": "diverged",
     "exit": 1
@@ -107,7 +108,7 @@
    "name": "consistency-first-observation",
    "mutation": "consistency changed from 'verified from 19545' to 'first observation'",
    "label": "requirement",
-   "spec_note": "SPEC §6 NORMATIVE (1): a verifier MUST NOT grant its top verdict to a countersignature whose continuity the witness did not prove. verify.py grants witnessed: this row is expected to FAIL until verify.py reads the consistency field.",
+   "spec_note": "SPEC \u00a76 NORMATIVE (1): a verifier MUST NOT grant its top verdict to a countersignature whose continuity the witness did not prove. verify.py grants witnessed: this row is expected to FAIL until verify.py reads the consistency field.",
    "verify_py": {
     "verdict": "witnessed",
     "exit": 0
@@ -124,7 +125,7 @@
    "name": "root-hex-flipped",
    "mutation": "matching line's root changed by one hex char (its signature no longer verifies)",
    "label": "choice",
-   "spec_note": "Reference: 'witness copy DISAGREES' -> diverged. verify.py matches lines on root too, so the line is not found -> witness-unusable. Both exit 1. SPEC §8 diverged covers 'a witnessed head conflicts', but this line's signature does not verify, so whether it is a witnessed head is open.",
+   "spec_note": "Reference: 'witness copy DISAGREES' -> diverged. verify.py matches lines on root too, so the line is not found -> witness-unusable. Both exit 1. SPEC \u00a78 diverged covers 'a witnessed head conflicts', but this line's signature does not verify, so whether it is a witnessed head is open.",
    "verify_py": {
     "verdict": "witness-unusable",
     "exit": 1
@@ -158,7 +159,7 @@
    "name": "matching-line-deleted",
    "mutation": "head-matching line removed",
    "label": "requirement",
-   "spec_note": "SPEC §8 witness-unusable (both agree on the verdict). SPEC §8 also says implementations SHOULD make its exit status distinct: reference exits 3, verify.py exits 1, the same code as diverged.",
+   "spec_note": "SPEC \u00a78 witness-unusable (both agree on the verdict). SPEC \u00a78 also says implementations SHOULD make its exit status distinct: reference exits 3, verify.py exits 1, the same code as diverged.",
    "verify_py": {
     "verdict": "witness-unusable",
     "exit": 1
@@ -170,6 +171,57 @@
     }
    },
    "agree": false
+  },
+  {
+   "name": "refusal-appended-after-good",
+   "mutation": "after the head-matching countersigned line, append a clone with status=refused-regression and witness_sig removed",
+   "label": "requirement",
+   "spec_note": "SPEC \u00a76 NORMATIVE (2): a refusal line MUST fail the run. verify.py ignores a refusal that appears after a good matching line (pinned known divergence: witnessed/0). Reference diverged/1.",
+   "verify_py": {
+    "verdict": "witnessed",
+    "exit": 0
+   },
+   "reference": {
+    "default": {
+     "verdict": "diverged",
+     "exit": 1
+    }
+   },
+   "agree": false
+  },
+  {
+   "name": "consistency-verified-from-19556",
+   "mutation": "consistency set to 'verified from 19556' (N = tree_size+1 = 19556)",
+   "label": "proposed-requirement",
+   "spec_note": "N > tree_size is unsigned (outside 1f916.witness.v1 preimage). Both implementations currently accept it (witnessed/0). Floor N<=tree_size can ship without a preimage change; signing from-size needs a spec bump (Aura c107957 / c108198; tally-stick c108204).",
+   "verify_py": {
+    "verdict": "witnessed",
+    "exit": 0
+   },
+   "reference": {
+    "default": {
+     "verdict": "witnessed",
+     "exit": 0
+    }
+   },
+   "agree": true
+  },
+  {
+   "name": "consistency-verified-from-99999",
+   "mutation": "consistency set to 'verified from 99999' (N >> tree_size)",
+   "label": "proposed-requirement",
+   "spec_note": "Same class as consistency-verified-from-19556; large N. Both witnessed/0 today.",
+   "verify_py": {
+    "verdict": "witnessed",
+    "exit": 0
+   },
+   "reference": {
+    "default": {
+     "verdict": "witnessed",
+     "exit": 0
+    }
+   },
+   "agree": true
   }
  ]
 }
