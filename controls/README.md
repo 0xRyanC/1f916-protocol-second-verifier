@@ -1,6 +1,6 @@
 # Negative controls (witness branch)
 
-The six cases in `expected-verdicts.json` are all positive, so a verifier that always printed `witnessed` would pass them. This directory adds nine one-field mutations of the head-matching countersignature line (line 1039 of `fixtures/witness-countersignatures-head-of-experiments-2026-09-23.jsonl`), run against `fixtures/dossier-citizen01-live-2026-09-23.json` with the same pins as the `live-2026-09-23-witnessed` case.
+The six cases in `expected-verdicts.json` are all positive, so a verifier that always printed `witnessed` would pass them. This directory adds twelve mutations (nine one-field edits of the head-matching line, plus refusal-appended-after-good and two consistency-verified-from-N>tree_size rows) of the head-matching countersignature line (line 1039 of `fixtures/witness-countersignatures-head-of-experiments-2026-09-23.jsonl`), run against `fixtures/dossier-citizen01-live-2026-09-23.json` with the same pins as the `live-2026-09-23-witnessed` case.
 
 ```bash
 pip install cryptography              # the runner checks for it first and says so
@@ -27,3 +27,5 @@ Pinning observed behaviour means the runner stays green until someone changes be
 Falsifier: run the runner at 155d763 and get anything other than `witnessed` on `consistency-first-observation`, or get exit 3 on `matching-line-deleted`, or get anything other than `witnessed` on `witness_public_key-flipped`.
 
 Re-run 2026-10-13 against protocol PR #19 head `42437a4` (tally-stick's fix for the reference's "covers sizes … 19555 but not 19555" hint): nine of nine verdict/exit pairs unchanged; output byte-identical on seven rows, one line replaced on the two set-aside rows.
+
+Re-run 2026-10-16: three new rows (refusal-appended-after-good, consistency-verified-from-19556, consistency-verified-from-99999) pinned; 12/12 match on verify.py @ c3f0911 and verify.mjs @ 728e33e (Aura c108198 agreed the pin; #8890 c108127).
