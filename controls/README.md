@@ -39,7 +39,7 @@ python3 controls/negative-controls.py --strict --reference /path/to/1f916-ai/pro
 python3 controls/negative-controls.py --strict --proposed --reference /path/to/1f916-ai/protocol # also red on PROPOSED
 ```
 
-The default (pinned) run is unchanged and still exits 0, but now ends with a `NOT spec-clean:` line naming every pinned known divergence, so it cannot read as clean.
+The default (pinned) run ends with a `NOT spec-clean:` line naming every pinned known divergence. Since 2026-10-19 its exit code says so as well (Aura c110951: the trailing line helps a human reader, not a pipeline). The run exits 1 on any mismatch against the pin, **3** when behaviour matches the pin but MUST/SHOULD divergences are pinned, and 0 only when there are none. `--allow-pinned-divergences` is the explicit opt-in that turns that 3 into 0, and it still names the divergences. PROPOSED rows never count toward the 3.
 
 Observed 2026-10-16 (verify.py @ c3f0911, verify.mjs @ 728e33e and PR #19 head 42437a4, identical): `--strict` exits **1** — MUST fails 3 (verify.py: `witness_public_key-flipped`, `consistency-first-observation`, `refusal-appended-after-good`), SHOULD fails 1 (verify.py `matching-line-deleted` exit 1), and verify.mjs passes every MUST/SHOULD row. `--strict --proposed` adds 4 PROPOSED fails (both from-N rows on both implementations).
 

@@ -11,10 +11,11 @@ Usage (from the repo root; no network; fixtures are not modified, mutated copies
     python3 controls/negative-controls.py --reference /path/to/1f916-ai/protocol   # needs node
     python3 controls/negative-controls.py --strict [--proposed] [--reference ...]
 
-Default (pinned) mode: exit 0 when every observed verdict/exit equals the pinned value in
-controls/expected-controls.json for each implementation that ran; 1 on any mismatch;
-2 if a dependency is missing. A green pinned run still prints how many requirement rows
-are pinned known divergences, so it cannot read as "spec-clean".
+Default (pinned) mode: 1 on any mismatch against the pinned value in
+controls/expected-controls.json; otherwise 3 when any MUST/SHOULD row is a pinned known
+divergence (behaviour unchanged, NOT spec-clean), and 0 only when there are none. A gate
+on the exit code therefore never sees a pinned divergence as green (Aura c110951).
+--allow-pinned-divergences turns that 3 into 0; the divergences are still named.
 
 --strict judges each implementation against the row's `strict` value (what the spec
 requires: MUST / SHOULD rows) instead of the pin, and exits 1 if any fails. With
@@ -92,6 +93,8 @@ def main():
     ap.add_argument("--reference", help="checkout of 1f916-ai/protocol (runs its verify.mjs too)")
     ap.add_argument("--strict", action="store_true", help="judge against what the spec requires (row 'strict'), not the pin")
     ap.add_argument("--proposed", action="store_true", help="with --strict, also fail on PROPOSED rows")
+    ap.add_argument("--allow-pinned-divergences", action="store_true",
+                    help="pinned mode: exit 0 (not 3) when the only findings are pinned known MUST/SHOULD divergences")
     a = ap.parse_args()
     preflight(a.reference)
     expected = json.load(open(os.path.join(HERE, "expected-controls.json")))
@@ -155,8 +158,12 @@ def main():
     print(f"\n{'all rows match expected-controls.json' if not bad else f'{bad} mismatch(es)'}")
     if known_div:
         print(f"NOT spec-clean: {len(known_div)} pinned known divergence(s) from MUST/SHOULD rows: " + ", ".join(known_div))
-        print("  (green above means 'behaviour unchanged', not 'meets the spec'; run with --strict to judge against the spec)")
-    sys.exit(1 if bad else 0)
+        print("  (matching the pin means 'behaviour unchanged', not 'meets the spec'; run with --strict to judge against the spec)")
+    if bad: sys.exit(1)
+    if known_div and not a.allow_pinned_divergences:
+        print("exit 3: pinned known divergences present (pass --allow-pinned-divergences to exit 0 on them)")
+        sys.exit(3)
+    sys.exit(0)
 
 if __name__ == "__main__":
     main()
